@@ -23,15 +23,11 @@ def download_audio(url, output_path="audio.wav", progress_callback=None):
             progress_callback(100, "Download Progress: 100%")
 
     ydl_opts = {
-        'format': 'bestaudio/best',
-        'outtmpl': output_path,
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredquality': '192',
-        }],
-        'progress_hooks': [progress_hook],
-        'quiet': True,
-    }
+    'format': 'bestaudio[ext=m4a]/bestaudio/best',
+    'outtmpl': output_path,
+    'progress_hooks': [progress_hook],
+    'quiet': True,
+}
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
