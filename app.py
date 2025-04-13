@@ -11,7 +11,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # ------------- Téléchargement Audio -------------
-def download_audio(url, output_path="audio.wav", progress_callback=None):
+def download_audio(url, output_path="audio.m4a", progress_callback=None):
     def progress_hook(d):
         if d['status'] == 'downloading':
             total_bytes = d.get('total_bytes', 0) or d.get('total_bytes_estimate', 0)
@@ -23,11 +23,12 @@ def download_audio(url, output_path="audio.wav", progress_callback=None):
             progress_callback(100, "Download Progress: 100%")
 
     ydl_opts = {
-    'format': 'bestaudio[ext=m4a]/bestaudio/best',
-    'outtmpl': output_path,
-    'progress_hooks': [progress_hook],
-    'quiet': True,
-}
+        'format': 'bestaudio[ext=m4a]/bestaudio/best',
+        'outtmpl': output_path,
+        'progress_hooks': [progress_hook],
+        'quiet': True,
+        'noplaylist': True,
+    }
 
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -46,7 +47,7 @@ def download_audio(url, output_path="audio.wav", progress_callback=None):
 def transcribe_audio(audio_path):
     logging.info("Transcribing audio...")
     try:
-        model = whisper.load_model("base")
+        model = whisper.load_model("tiny", device="cpu")
         result = model.transcribe(audio_path)
         logging.info("Transcription complete!")
         return result["text"]
@@ -122,7 +123,7 @@ def generate_tts(summary, language_code):
 
 # ------------- Traitement Principal -------------
 def process_video(url):
-    audio_path = "audio.wav"
+    audio_path = "audio.m4a"
     audio_path = download_audio(url, audio_path)
     if not audio_path:
         return None
