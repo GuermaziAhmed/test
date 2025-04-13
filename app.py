@@ -23,13 +23,12 @@ def download_audio(url, output_path="audio.wav", progress_callback=None):
             progress_callback(100, "Download Progress: 100%")
 
     ydl_opts = {
-        'format': 'bestaudio[ext=m4a]/bestaudio/best',
+        'format': 'bestaudio/best',
         'outtmpl': output_path,
         'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        
-        'preferredquality': '160',  # Lower bitrate = smaller file
-    }],
+            'key': 'FFmpegExtractAudio',
+            'preferredquality': '192',
+        }],
         'progress_hooks': [progress_hook],
         'quiet': True,
     }
@@ -51,7 +50,7 @@ def download_audio(url, output_path="audio.wav", progress_callback=None):
 def transcribe_audio(audio_path):
     logging.info("Transcribing audio...")
     try:
-        model = whisper.load_model("tiny", device="cpu")
+        model = whisper.load_model("base")
         result = model.transcribe(audio_path)
         logging.info("Transcription complete!")
         return result["text"]
